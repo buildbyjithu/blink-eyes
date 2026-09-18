@@ -37,19 +37,28 @@ raw EAR number varies a lot by camera, distance, and face shape.
    [latest release](https://github.com/buildbyjithu/blink-eyes/releases/latest).
 2. Install it: drag the `.app` from the DMG into `/Applications`, or
    double-click the `.pkg` to run the installer.
-3. Open it. You'll get a **"'Blink Eyes' Not Opened — Apple could not
-   verify..."** warning (it's unsigned, not malware — see below). Click
-   **Done**.
-4. Open **Terminal** and run:
+3. **If you used the DMG, eject it now** (right-click the mounted "Blink
+   Eyes" volume in Finder's sidebar → Eject). Leaving it mounted can make
+   Spotlight/`open` resolve "Blink Eyes" to the copy on the disk image
+   instead of the one in `/Applications` — which looks like "Spotlight
+   just won't open it" once you eject or restart and that copy vanishes.
+4. Open it from `/Applications`. You'll get a **"'Blink Eyes' Not Opened
+   — Apple could not verify..."** warning (it's unsigned, not malware —
+   see below). Click **Done**.
+5. Open **Terminal** and run:
    ```
    xattr -dr com.apple.quarantine "/Applications/Blink Eyes.app"
    ```
-5. Open the app again — it launches normally this time.
-6. Grant **Camera** and **Screen Recording** permissions when macOS
+6. Open the app again — it launches normally this time.
+7. Grant **Camera** and **Screen Recording** permissions when macOS
    prompts (see [Permissions](#permissions-macos) below — Screen Recording
    specifically needs a full Quit + relaunch after granting it).
-7. Blink twice quickly at the camera, then paste (Cmd+V) to check your
+8. Blink twice quickly at the camera, then paste (Cmd+V) to check your
    clipboard.
+
+If you ever moved a copy of the app to Trash, empty Trash too — a leftover
+copy there can also confuse Spotlight/Launch Services into resolving the
+app name to the wrong (deleted) location.
 
 ### Why the Gatekeeper warning happens
 
