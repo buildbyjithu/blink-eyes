@@ -3,9 +3,13 @@
 Double-blink at your webcam to take a full-screen screenshot and copy it
 straight to the clipboard — no keyboard shortcut needed.
 
-Runs quietly as a background menu-bar app. It never streams or stores your
-webcam video anywhere — frames are processed in memory, in real time, on
-your own machine, and thrown away.
+**Privacy-first and secure: everything runs entirely on your own machine.**
+There are no network calls, no cloud processing, and no LLM or third-party
+service involved anywhere in the pipeline. Webcam frames are read, analyzed
+on-device with a local MediaPipe model, and discarded — nothing is streamed,
+uploaded, or stored, and the app has no server component of any kind.
+
+Runs quietly as a background menu-bar app.
 
 **Platform support:** fully working on **macOS**. The core detection code
 is cross-platform Python, and a Windows clipboard backend is implemented,
@@ -27,8 +31,13 @@ raw EAR number varies a lot by camera, distance, and face shape.
 
 ## Installing (macOS)
 
-There's no hosted download yet — build the installer yourself (it's one
-script; see [docs/BUILDING.md](docs/BUILDING.md) for details):
+**Download:** grab `Blink Eyes.dmg` or `Blink Eyes.pkg` from the
+[latest release](https://github.com/buildbyjithu/blink-eyes/releases/latest) —
+drag the `.app` from the DMG into `/Applications`, or double-click the
+`.pkg` to run the installer.
+
+Prefer to build it yourself instead? It's one script (see
+[docs/BUILDING.md](docs/BUILDING.md) for details):
 
 ```
 python3 -m venv .venv && source .venv/bin/activate
@@ -36,9 +45,7 @@ pip install -r requirements-build.txt
 ./packaging/build_macos.sh
 ```
 
-This produces `dist/Blink Eyes.dmg` and `dist/Blink Eyes.pkg` — either
-drag-install the `.app` from the DMG into `/Applications`, or double-click
-the `.pkg` to run the installer.
+This produces `dist/Blink Eyes.dmg` and `dist/Blink Eyes.pkg` locally.
 
 **These builds are unsigned** (no Apple Developer ID was used). On first
 launch, macOS Gatekeeper will refuse to open it normally — right-click
