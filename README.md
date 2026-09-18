@@ -47,23 +47,27 @@ pip install -r requirements-build.txt
 
 This produces `dist/Blink Eyes.dmg` and `dist/Blink Eyes.pkg` locally.
 
-**These builds are unsigned** (no Apple Developer ID was used), and macOS
-tags anything downloaded from a browser with a quarantine flag. On first
-launch you'll likely get a **"'Blink Eyes' Not Opened — Apple could not
-verify..."** dialog with only "Move to Trash" / "Done" options (no "Open
-Anyway"), since recent macOS versions don't always show that button even
-via right-click → Open.
+**These builds are unsigned** (no Apple Developer ID was used yet), and
+macOS tags anything downloaded from a browser with a quarantine flag. On
+first launch you'll get a **"'Blink Eyes' Not Opened — Apple could not
+verify..."** dialog with only "Move to Trash" / "Done" (no "Open Anyway",
+since recent macOS versions don't always show that button even via
+right-click → Open).
 
-The reliable fix: click **Done**, then remove the quarantine flag yourself
-in Terminal (one-time, per machine):
+The reliable fix: click **Done**, then open Terminal and run:
 
 ```
-xattr -d com.apple.quarantine "/Applications/Blink Eyes.app"
+xattr -dr com.apple.quarantine "/Applications/Blink Eyes.app"
 ```
 
-Then open the app normally. If System Settings → Privacy & Security *does*
-show an "Open Anyway" button for Blink Eyes after the blocked attempt,
-that also works instead of the Terminal command.
+Then open the app normally from `/Applications`. If System Settings →
+Privacy & Security *does* show an "Open Anyway" button for Blink Eyes
+after the blocked attempt, that works too instead of the Terminal command.
+
+Note this isn't a true one-time fix: macOS re-applies the quarantine flag
+any time the app is freshly downloaded or re-copied out of the DMG/PKG, so
+you'll need to repeat this after every update until the app is
+code-signed and notarized with an Apple Developer ID.
 
 Prefer running from source instead of installing? See
 [Running from source](docs/BUILDING.md#running-from-source).
