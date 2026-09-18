@@ -11,19 +11,33 @@ Produces dist/Blink Eyes.app.
 
 import os
 
+from PyInstaller.utils.hooks import collect_all
+
 PROJECT_ROOT = os.path.abspath(os.path.join(SPECPATH, ".."))
 APP_VERSION = "1.0.0"
 
 block_cipher = None
 
+# mediapipe loads at least one native library (mediapipe/tasks/c/libmediapipe.dylib)
+# via importlib.resources using a runtime-constructed module name
+# ("mediapipe.tasks.c"), which PyInstaller's static import scanner can't
+# trace back to a literal `import` statement -- it silently omits the file,
+# producing a `ModuleNotFoundError: No module named 'mediapipe.tasks.c'`
+# crash the first time FaceLandmarker.create_from_options() runs in the
+# frozen app (this doesn't happen when running from source, only from the
+# packaged build). collect_all() forces every data/binary/hidden-import for
+# the whole package to be bundled instead of relying on that scanner.
+mp_datas, mp_binaries, mp_hiddenimports = collect_all("mediapipe")
+
 a = Analysis(
     [os.path.join(PROJECT_ROOT, "main.py")],
     pathex=[PROJECT_ROOT],
-    binaries=[],
+    binaries=mp_binaries,
     datas=[
         (os.path.join(PROJECT_ROOT, "models", "face_landmarker.task"), "models"),
-    ],
-    hiddenimports=[],
+    ]
+    + mp_datas,
+    hiddenimports=mp_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

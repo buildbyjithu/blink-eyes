@@ -14,18 +14,27 @@ requirements-build.txt installed):
 
 import os
 
+from PyInstaller.utils.hooks import collect_all
+
 PROJECT_ROOT = os.path.abspath(os.path.join(SPECPATH, ".."))
 
 block_cipher = None
 
+# See packaging/blink-eyes.spec for why this is needed: mediapipe loads at
+# least one native library via importlib.resources with a runtime-built
+# module name, which PyInstaller's static scanner can't trace and silently
+# drops, crashing the frozen app the first time FaceLandmarker is created.
+mp_datas, mp_binaries, mp_hiddenimports = collect_all("mediapipe")
+
 a = Analysis(
     [os.path.join(PROJECT_ROOT, "main.py")],
     pathex=[PROJECT_ROOT],
-    binaries=[],
+    binaries=mp_binaries,
     datas=[
         (os.path.join(PROJECT_ROOT, "models", "face_landmarker.task"), "models"),
-    ],
-    hiddenimports=[],
+    ]
+    + mp_datas,
+    hiddenimports=mp_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

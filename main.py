@@ -42,6 +42,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger("blink-eyes")
 
+
+def _log_thread_exception(args: threading.ExceptHookArgs) -> None:
+    # console=False in the packaged build means stderr goes nowhere, so an
+    # uncaught thread exception (e.g. from pystray's own setup thread)
+    # would otherwise vanish silently instead of showing up anywhere.
+    logger.error(
+        "Unhandled exception in thread %s", args.thread.name if args.thread else "?",
+        exc_info=(args.exc_type, args.exc_value, args.exc_traceback),
+    )
+
+
+threading.excepthook = _log_thread_exception
+
 if getattr(sys, "frozen", False):
     # Running from a PyInstaller-built app bundle: bundled data files (like
     # the model) live under sys._MEIPASS, not next to this script.
@@ -133,9 +146,18 @@ def main() -> None:
             stop_event.set()
         return
 
+    def run_detector() -> None:
+        try:
+            detector.run()
+        except Exception:
+            logger.exception("Blink detector thread crashed")
+
     def setup(icon) -> None:
-        icon.visible = True
-        threading.Thread(target=detector.run, daemon=True).start()
+        try:
+            icon.visible = True
+            threading.Thread(target=run_detector, daemon=True).start()
+        except Exception:
+            logger.exception("Tray setup callback crashed")
 
     icon.run(setup=setup)
 
