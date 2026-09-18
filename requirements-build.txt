@@ -1,0 +1,4 @@
+# Only needed to build standalone installers (DMG/PKG/MSI) via the
+# scripts in packaging/. Not needed to run blink-eyes from source.
+-r requirements.txt
+pyinstaller>=6.10

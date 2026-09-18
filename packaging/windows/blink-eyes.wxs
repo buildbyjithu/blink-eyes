@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WiX v3 product definition for the Blink Eyes MSI installer.
+
+  The <ComponentGroup Id="AppFiles"> referenced below is NOT defined here;
+  it's generated at build time by heat.exe harvesting the PyInstaller
+  output directory (dist/blink-eyes/), since that directory's exact file
+  list depends on PyInstaller/mediapipe/opencv versions and isn't practical
+  to hand-maintain. See build_windows.ps1.
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*"
+           Name="Blink Eyes"
+           Language="1033"
+           Version="1.0.0.0"
+           Manufacturer="Blink Eyes"
+           UpgradeCode="E7FE026C-8800-470D-BB2A-051B7CE9F464">
+
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="Blink Eyes" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Blink Eyes" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Blink Eyes" />
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="*">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Blink Eyes"
+                  Description="Double-blink to screenshot"
+                  Target="[INSTALLFOLDER]blink-eyes.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="CleanUpShortcut" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\BlinkEyes" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <Icon Id="AppIcon.ico" SourceFile="$(var.ProjectRoot)\packaging\icon\AppIcon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
+  </Product>
+</Wix>

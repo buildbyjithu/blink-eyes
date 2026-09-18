@@ -1,0 +1,11 @@
+opencv-python>=4.9
+# mediapipe 1.0.x FaceLandmarker crashes with a Metal/GPU graph-service
+# abort on some macOS setups; pin to the last known-good 0.10.x release
+mediapipe==0.10.35
+numpy>=1.26,<2.0
+pillow>=10.0
+pystray>=0.19.5
+pyobjc-framework-Cocoa>=10.0 ; sys_platform == "darwin"
+pyobjc-framework-Quartz>=10.0 ; sys_platform == "darwin"
+pyobjc-framework-AVFoundation>=10.0 ; sys_platform == "darwin"
+pywin32>=306 ; sys_platform == "win32"
