@@ -47,10 +47,23 @@ pip install -r requirements-build.txt
 
 This produces `dist/Blink Eyes.dmg` and `dist/Blink Eyes.pkg` locally.
 
-**These builds are unsigned** (no Apple Developer ID was used). On first
-launch, macOS Gatekeeper will refuse to open it normally — right-click
-(or Control-click) the app and choose **Open**, then confirm, to bypass
-this once. This is a one-time step per machine.
+**These builds are unsigned** (no Apple Developer ID was used), and macOS
+tags anything downloaded from a browser with a quarantine flag. On first
+launch you'll likely get a **"'Blink Eyes' Not Opened — Apple could not
+verify..."** dialog with only "Move to Trash" / "Done" options (no "Open
+Anyway"), since recent macOS versions don't always show that button even
+via right-click → Open.
+
+The reliable fix: click **Done**, then remove the quarantine flag yourself
+in Terminal (one-time, per machine):
+
+```
+xattr -d com.apple.quarantine "/Applications/Blink Eyes.app"
+```
+
+Then open the app normally. If System Settings → Privacy & Security *does*
+show an "Open Anyway" button for Blink Eyes after the blocked attempt,
+that also works instead of the Terminal command.
 
 Prefer running from source instead of installing? See
 [Running from source](docs/BUILDING.md#running-from-source).
