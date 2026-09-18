@@ -31,13 +31,44 @@ raw EAR number varies a lot by camera, distance, and face shape.
 
 ## Installing (macOS)
 
-**Download:** grab `Blink Eyes.dmg` or `Blink Eyes.pkg` from the
-[latest release](https://github.com/buildbyjithu/blink-eyes/releases/latest) —
-drag the `.app` from the DMG into `/Applications`, or double-click the
-`.pkg` to run the installer.
+### Quick start
 
-Prefer to build it yourself instead? It's one script (see
-[docs/BUILDING.md](docs/BUILDING.md) for details):
+1. Download `Blink Eyes.dmg` or `Blink Eyes.pkg` from the
+   [latest release](https://github.com/buildbyjithu/blink-eyes/releases/latest).
+2. Install it: drag the `.app` from the DMG into `/Applications`, or
+   double-click the `.pkg` to run the installer.
+3. Open it. You'll get a **"'Blink Eyes' Not Opened — Apple could not
+   verify..."** warning (it's unsigned, not malware — see below). Click
+   **Done**.
+4. Open **Terminal** and run:
+   ```
+   xattr -dr com.apple.quarantine "/Applications/Blink Eyes.app"
+   ```
+5. Open the app again — it launches normally this time.
+6. Grant **Camera** and **Screen Recording** permissions when macOS
+   prompts (see [Permissions](#permissions-macos) below — Screen Recording
+   specifically needs a full Quit + relaunch after granting it).
+7. Blink twice quickly at the camera, then paste (Cmd+V) to check your
+   clipboard.
+
+### Why the Gatekeeper warning happens
+
+**These builds are unsigned** (no Apple Developer ID was used yet), and
+macOS tags anything downloaded from a browser with a quarantine flag —
+that's what triggers the "Not Opened" dialog in step 3. Recent macOS
+versions don't always show an "Open Anyway" button for this even via
+right-click → Open, which is why step 4's Terminal command is the reliable
+fix. (If System Settings → Privacy & Security *does* show an "Open
+Anyway" button for Blink Eyes after the blocked attempt, that works too.)
+
+This isn't a true one-time fix: macOS re-applies the quarantine flag any
+time the app is freshly downloaded or re-copied out of the DMG/PKG, so
+you'll need to repeat step 4 after every update until the app is
+code-signed and notarized with an Apple Developer ID.
+
+### Building it yourself instead
+
+It's one script (see [docs/BUILDING.md](docs/BUILDING.md) for details):
 
 ```
 python3 -m venv .venv && source .venv/bin/activate
@@ -45,29 +76,8 @@ pip install -r requirements-build.txt
 ./packaging/build_macos.sh
 ```
 
-This produces `dist/Blink Eyes.dmg` and `dist/Blink Eyes.pkg` locally.
-
-**These builds are unsigned** (no Apple Developer ID was used yet), and
-macOS tags anything downloaded from a browser with a quarantine flag. On
-first launch you'll get a **"'Blink Eyes' Not Opened — Apple could not
-verify..."** dialog with only "Move to Trash" / "Done" (no "Open Anyway",
-since recent macOS versions don't always show that button even via
-right-click → Open).
-
-The reliable fix: click **Done**, then open Terminal and run:
-
-```
-xattr -dr com.apple.quarantine "/Applications/Blink Eyes.app"
-```
-
-Then open the app normally from `/Applications`. If System Settings →
-Privacy & Security *does* show an "Open Anyway" button for Blink Eyes
-after the blocked attempt, that works too instead of the Terminal command.
-
-Note this isn't a true one-time fix: macOS re-applies the quarantine flag
-any time the app is freshly downloaded or re-copied out of the DMG/PKG, so
-you'll need to repeat this after every update until the app is
-code-signed and notarized with an Apple Developer ID.
+This produces `dist/Blink Eyes.dmg` and `dist/Blink Eyes.pkg` locally
+(same Gatekeeper caveat applies since it's still unsigned).
 
 Prefer running from source instead of installing? See
 [Running from source](docs/BUILDING.md#running-from-source).
