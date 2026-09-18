@@ -49,8 +49,10 @@ class BlinkDetector:
         return mp_vision.FaceLandmarker.create_from_options(options)
 
     def _skip_warmup_frames(self, cap: cv2.VideoCapture) -> None:
-        for _ in range(config.WARMUP_FRAMES):
-            cap.read()
+        for i in range(config.WARMUP_FRAMES):
+            logger.info("Warmup frame %d/%d: reading...", i + 1, config.WARMUP_FRAMES)
+            ret, _ = cap.read()
+            logger.info("Warmup frame %d/%d: ret=%s", i + 1, config.WARMUP_FRAMES, ret)
 
     def _detect(self, landmarker: mp_vision.FaceLandmarker, frame):
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -123,7 +125,9 @@ class BlinkDetector:
                     continue
 
                 if cap is None:
+                    logger.info("Opening camera index %d...", config.CAMERA_INDEX)
                     cap = cv2.VideoCapture(config.CAMERA_INDEX)
+                    logger.info("cap.isOpened() = %s", cap.isOpened())
                     cap.set(cv2.CAP_PROP_FRAME_WIDTH, config.FRAME_WIDTH)
                     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, config.FRAME_HEIGHT)
                     self._skip_warmup_frames(cap)
